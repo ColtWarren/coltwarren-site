@@ -1,12 +1,157 @@
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Hello, World!</title>
-	</head>
-	<body>
-		<h1 id="heading">Hello, World!</h1>
-		<p>This page comes from a static asset stored at `public/index.html` as configured in `wrangler.jsonc`.</p>
-	</body>
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta name="description"
+		content="Colt Warren — software developer building practical tools, learning Cloudflare, and documenting the work." />
+	<title>Colt Warren</title>
+
+	<style>
+		:root {
+			font-family:
+				Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+				"Segoe UI", sans-serif;
+			color: #f5f5f5;
+			background: #0b0d10;
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+
+		body {
+			margin: 0;
+			min-height: 100vh;
+			background:
+				radial-gradient(circle at top right, #1c2633 0, transparent 38rem),
+				#0b0d10;
+		}
+
+		main {
+			width: min(1100px, calc(100% - 2rem));
+			margin: 0 auto;
+			padding: 6rem 0;
+		}
+
+		.eyebrow {
+			color: #9da7b3;
+			font-size: 0.9rem;
+			letter-spacing: 0.14em;
+			text-transform: uppercase;
+			margin-bottom: 1.25rem;
+		}
+
+		h1 {
+			font-size: clamp(3rem, 8vw, 6.5rem);
+			line-height: 0.95;
+			letter-spacing: -0.055em;
+			margin: 0;
+		}
+
+		.intro {
+			max-width: 700px;
+			color: #b9c1ca;
+			font-size: clamp(1.15rem, 2vw, 1.45rem);
+			line-height: 1.6;
+			margin-top: 2rem;
+		}
+
+		.rule {
+			border: 0;
+			border-top: 1px solid #272c33;
+			margin: 5rem 0 3rem;
+		}
+
+		section h2 {
+			font-size: 1rem;
+			text-transform: uppercase;
+			letter-spacing: 0.12em;
+			color: #9da7b3;
+			margin-bottom: 1.5rem;
+		}
+
+		.grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+			gap: 1rem;
+		}
+
+		.card {
+			border: 1px solid #272c33;
+			border-radius: 18px;
+			padding: 1.5rem;
+			background: rgba(255, 255, 255, 0.025);
+		}
+
+		.card h3 {
+			margin-top: 0;
+			font-size: 1.25rem;
+		}
+
+		.card p {
+			color: #9da7b3;
+			line-height: 1.6;
+			margin-bottom: 0;
+		}
+
+		footer {
+			color: #6f7882;
+			margin-top: 5rem;
+			font-size: 0.9rem;
+		}
+	</style>
+</head>
+
+<body>
+	<main>
+		<p class="eyebrow">Software Developer · Builder · Student</p>
+
+		<h1>Colt Warren</h1>
+
+		<p class="intro">
+			I build practical software, study modern computing systems,
+			and document what I learn along the way.
+		</p>
+
+		<hr class="rule" />
+
+		<section>
+			<h2>Current Work</h2>
+
+			<div class="grid">
+				<article class="card">
+					<h3>Cloudflare OS</h3>
+					<p>
+						Learning Cloudflare's application platform through
+						hands-on experiments, Blueprints, Workers, AI Gateway,
+						and production deployment.
+					</p>
+				</article>
+
+				<article class="card">
+					<h3>Software Projects</h3>
+					<p>
+						Building applications across Java, Spring Boot,
+						JavaScript, React, APIs, and Cloudflare.
+					</p>
+				</article>
+
+				<article class="card">
+					<h3>Building in Public</h3>
+					<p>
+						Sharing the process, lessons, failures, and progress
+						as the work develops.
+					</p>
+				</article>
+			</div>
+		</section>
+
+		<footer>
+			© 2026 Colt Warren
+		</footer>
+	</main>
+</body>
+
 </html>
