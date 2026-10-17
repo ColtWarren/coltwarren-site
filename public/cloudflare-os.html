@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta name="description"
+		content="Colt Warren's Cloudflare OS personal deployment, experiments, architecture, and engineering work." />
+	<title>Cloudflare OS | Colt Warren</title>
+
+	<style>
+		:root {
+			font-family:
+				Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+				"Segoe UI", sans-serif;
+			color: #f5f5f5;
+			background: #0b0d10;
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+
+		html {
+			scroll-behavior: smooth;
+		}
+
+		body {
+			margin: 0;
+			min-height: 100vh;
+			background:
+				radial-gradient(circle at top right, #1c2633 0, transparent 38rem),
+				#0b0d10;
+		}
+
+		a {
+			color: inherit;
+		}
+
+		main {
+			width: min(1100px, calc(100% - 2rem));
+			margin: 0 auto;
+			padding: 3rem 0 6rem;
+		}
+
+		.back-link {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.45rem;
+			color: #9da7b3;
+			text-decoration: none;
+			font-size: 0.95rem;
+			margin-bottom: 4rem;
+		}
+
+		.back-link:hover {
+			color: #f5f5f5;
+		}
+
+		.eyebrow {
+			color: #9da7b3;
+			font-size: 0.9rem;
+			letter-spacing: 0.14em;
+			text-transform: uppercase;
+			margin-bottom: 1.25rem;
+		}
+
+		h1 {
+			font-size: clamp(3rem, 8vw, 6.5rem);
+			line-height: 0.95;
+			letter-spacing: -0.055em;
+			margin: 0;
+		}
+
+		h2 {
+			font-size: 1rem;
+			text-transform: uppercase;
+			letter-spacing: 0.12em;
+			color: #9da7b3;
+			margin: 0 0 1.5rem;
+		}
+
+		h3 {
+			margin-top: 0;
+			font-size: 1.3rem;
+		}
+
+		.intro {
+			max-width: 760px;
+			color: #b9c1ca;
+			font-size: clamp(1.15rem, 2vw, 1.45rem);
+			line-height: 1.65;
+			margin-top: 2rem;
+		}
+
+		.note {
+			max-width: 760px;
+			color: #7f8a96;
+			line-height: 1.7;
+			margin-top: 1.5rem;
+			font-size: 0.95rem;
+		}
+
+		.rule {
+			border: 0;
+			border-top: 1px solid #272c33;
+			margin: 5rem 0 3rem;
+		}
+
+		.section-copy {
+			max-width: 800px;
+			color: #aab3bd;
+			line-height: 1.75;
+			font-size: 1.02rem;
+		}
+
+		.grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+			gap: 1rem;
+			margin-top: 2rem;
+		}
+
+		.card {
+			border: 1px solid #272c33;
+			border-radius: 18px;
+			padding: 1.5rem;
+			background: rgba(255, 255, 255, 0.025);
+		}
+
+		.card p {
+			color: #9da7b3;
+			line-height: 1.65;
+			margin-bottom: 0;
+		}
+
+		.architecture {
+			margin-top: 2rem;
+			border: 1px solid #272c33;
+			border-radius: 18px;
+			padding: 2rem;
+			background: rgba(255, 255, 255, 0.025);
+		}
+
+		.architecture pre {
+			margin: 0;
+			overflow-x: auto;
+			color: #c7d0d9;
+			font-size: 0.95rem;
+			line-height: 1.8;
+			font-family:
+				"SFMono-Regular", Consolas, "Liberation Mono", monospace;
+		}
+
+
+		.work-link {
+			margin-top: 1.25rem !important;
+		}
+
+		.work-link a {
+			color: #d7dee5;
+			text-decoration: none;
+			font-weight: 600;
+		}
+
+		.work-link a:hover {
+			text-decoration: underline;
+		}
+
+		.muted-card {
+			opacity: 0.72;
+		}
+
+		.case-label {
+			color: #8f9aa6;
+			font-size: 0.8rem;
+			letter-spacing: 0.14em;
+			text-transform: uppercase;
+			margin-bottom: 0.75rem;
+		}
+
+
+		code {
+			font-family:
+				"SFMono-Regular", Consolas, "Liberation Mono", monospace;
+			color: #d9e0e6;
+		}
+
+		.links {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+			gap: 1rem;
+		}
+
+		.link-card {
+			display: block;
+			border: 1px solid #272c33;
+			border-radius: 18px;
+			padding: 1.4rem;
+			text-decoration: none;
+			background: rgba(255, 255, 255, 0.025);
+			transition:
+				transform 150ms ease,
+				border-color 150ms ease,
+				background 150ms ease;
+		}
+
+		.link-card:hover {
+			transform: translateY(-2px);
+			border-color: #4a535e;
+			background: rgba(255, 255, 255, 0.045);
+		}
+
+		.link-card strong {
+			display: block;
+			margin-bottom: 0.45rem;
+		}
+
+		.link-card span {
+			color: #8f99a4;
+			font-size: 0.92rem;
+			line-height: 1.5;
+		}
+
+		.status {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.5rem;
+			margin-top: 1.5rem;
+			border: 1px solid #2f4938;
+			border-radius: 999px;
+			padding: 0.55rem 0.8rem;
+			color: #a8d5b5;
+			background: rgba(57, 117, 76, 0.12);
+			font-size: 0.88rem;
+		}
+
+		.status-dot {
+			width: 8px;
+			height: 8px;
+			border-radius: 50%;
+			background: #73c58a;
+		}
+
+		footer {
+			color: #6f7882;
+			margin-top: 5rem;
+			font-size: 0.9rem;
+		}
+
+		@media (max-width: 640px) {
+			main {
+				padding-top: 2rem;
+			}
+
+			.back-link {
+				margin-bottom: 3rem;
+			}
+
+			.architecture {
+				padding: 1.25rem;
+			}
+
+		}
+	</style>
+</head>
+
+<body>
+	<main>
+		<a class="back-link" href="/">← Back to Colt Warren</a>
+
+		<header>
+			<p class="eyebrow">
+				Personal Deployment · Experimentation · Engineering
+			</p>
+
+			<h1>Cloudflare OS</h1>
+
+			<p class="intro">
+				I am learning Cloudflare's application platform by operating
+				my own Cloudflare OS deployment, building experiments,
+				debugging real failures, and documenting the engineering
+				process as I go.
+			</p>
+
+			<p class="note">
+				Cloudflare OS is a Cloudflare project. This page documents my
+				personal deployment, experiments, debugging work, and
+				engineering work around the project. It is not presented as my
+				original product.
+			</p>
+
+			<div class="status">
+				<span class="status-dot"></span>
+				Personal deployment live
+			</div>
+		</header>
+
+		<hr class="rule" />
+
+		<section>
+			<h2>Overview</h2>
+
+			<p class="section-copy">
+				My goal is to understand how Cloudflare intended OS
+				capabilities to be assembled rather than treating the project
+				as a black box. I am studying the relationships between
+				Workers, Durable Objects, Cloudflare Access, AI Gateway,
+				Workers AI, Gatekeepers, Blueprints, KV, R2, RPC, and the
+				application layer that connects them.
+			</p>
+
+			<div class="grid">
+				<article class="card">
+					<h3>Production Deployment</h3>
+					<p>
+						A private Cloudflare OS instance protected by
+						Cloudflare Access and deployed across multiple
+						Cloudflare Workers.
+					</p>
+				</article>
+
+				<article class="card">
+					<h3>Hands-On Experiments</h3>
+					<p>
+						Small exercises designed to understand persistence,
+						Blueprint portability, RPC behavior, Gatekeepers,
+						scheduling, and Cloudflare storage primitives.
+					</p>
+				</article>
+
+				<article class="card">
+					<h3>Build in Public</h3>
+					<p>
+						Failures, fixes, architecture decisions, and lessons
+						are documented so the process is visible rather than
+						only the finished result.
+					</p>
+				</article>
+			</div>
+		</section>
+
+		<hr class="rule" />
+
+		<section>
+			<h2>Architecture</h2>
+
+			<p class="section-copy">
+				The personal deployment keeps the public entry point narrow
+				while internal capabilities communicate through Cloudflare's
+				service and RPC model.
+			</p>
+
+			<div class="architecture">
+				<pre>Cloudflare Access
+        │
+        ▼
+   Router Worker
+        │
+        ▼
+ ┌──────────────────────────────────────────┐
+ │ Workshop · Context · Scheduler           │
+ │ Gatekeepers · Error Reporting            │
+ └──────────────────────────────────────────┘
+        │
+        ▼
+ Workers AI via AI Gateway
+        │
+        ▼
+ KV · R2 · Durable Objects</pre>
+			</div>
+		</section>
+
+		<hr class="rule" />
+
+		<section>
+			<h2>Recent Engineering Work</h2>
+
+			<p class="section-copy">
+				I document debugging work, experiments, and production findings in
+				GitHub Issues so the technical record remains connected to the code
+				and commits that produced it.
+			</p>
+
+			<div class="grid">
+				<article class="card">
+					<p class="case-label">Resolved · Issue #1</p>
+
+					<h3>Blueprint Upload Over Cloudflare Access</h3>
+
+					<p>
+						Diagnosed a production Blueprint upload failure caused by a
+						raw <code>ReadableStream</code> crossing a promise-pipelined
+						Cap'n Web RPC capability. Implemented and tested a minimal
+						fix, deployed it, and verified the complete Blueprint
+						portability path through Durable Object persistence.
+					</p>
+
+					<p class="work-link">
+						<a href="https://github.com/ColtWarren/coltwarren-site/issues/1" target="_blank"
+							rel="noopener noreferrer">
+							View engineering record →
+						</a>
+					</p>
+				</article>
+
+				<article class="card muted-card">
+					<p class="case-label">Ongoing</p>
+
+					<h3>More Cloudflare OS Work</h3>
+
+					<p>
+						Future experiments, architecture investigations, bugs, and
+						production findings will be documented here as the project
+						develops.
+					</p>
+				</article>
+			</div>
+		</section>
+
+		<hr class="rule" />
+
+		<section>
+			<h2>Project Links</h2>
+
+			<div class="links">
+				<a class="link-card" href="https://github.com/cloudflare/cloudflare-os" target="_blank"
+					rel="noopener noreferrer">
+					<strong>Cloudflare OS Upstream</strong>
+					<span>
+						The official Cloudflare OS repository maintained by
+						Cloudflare.
+					</span>
+				</a>
+
+				<a class="link-card" href="https://github.com/ColtWarren/cloudflare-os-reference" target="_blank"
+					rel="noopener noreferrer">
+					<strong>Cloudflare OS Reference Fork</strong>
+					<span>
+						My public reference fork and isolated engineering
+						branches used during experimentation.
+					</span>
+				</a>
+
+				<a class="link-card" href="https://github.com/ColtWarren/coltwarren-site/issues/1" target="_blank"
+					rel="noopener noreferrer">
+					<strong>Issue #1 — Blueprint RPC Bug</strong>
+					<span>
+						Public record of the failure, diagnosis, fix,
+						validation, and production verification.
+					</span>
+				</a>
+
+				<a class="link-card"
+					href="https://github.com/ColtWarren/cloudflare-os-reference/commit/4b064f11f33fc668ef26150d544cc3b38c0ad80b"
+					target="_blank" rel="noopener noreferrer">
+					<strong>Fix Commit</strong>
+					<span>
+						The minimal Cloudflare OS frontend change used to
+						resolve the Blueprint upload failure.
+					</span>
+				</a>
+			</div>
+		</section>
+
+		<footer>
+			© 2026 Colt Warren · Building and learning in public
+		</footer>
+	</main>
+</body>
+
+</html>
