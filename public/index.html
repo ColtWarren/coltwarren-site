@@ -85,6 +85,22 @@
 			background: rgba(255, 255, 255, 0.025);
 		}
 
+		.card-link {
+			display: block;
+			color: inherit;
+			text-decoration: none;
+			transition:
+				transform 150ms ease,
+				border-color 150ms ease,
+				background 150ms ease;
+		}
+
+		.card-link:hover {
+			transform: translateY(-2px);
+			border-color: #4a535e;
+			background: rgba(255, 255, 255, 0.045);
+		}
+
 		.card h3 {
 			margin-top: 0;
 			font-size: 1.25rem;
@@ -121,14 +137,14 @@
 			<h2>Current Work</h2>
 
 			<div class="grid">
-				<article class="card">
+				<a class="card card-link" href="/cloudflare-os">
 					<h3>Cloudflare OS</h3>
 					<p>
 						Learning Cloudflare's application platform through
 						hands-on experiments, Blueprints, Workers, AI Gateway,
 						and production deployment.
 					</p>
-				</article>
+				</a>
 
 				<article class="card">
 					<h3>Software Projects</h3>
